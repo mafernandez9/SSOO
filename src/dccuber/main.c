@@ -19,6 +19,7 @@ int ES3;
 
 void handler_fabrica(int sig)
 {
+  printf("\nCerraré la fábrica\n");
   int i = 0;
   while (i < N)
   {
@@ -28,14 +29,17 @@ void handler_fabrica(int sig)
     }
     i++;
   }
+  exit(0);
 }
 
-void handle_finish(int sig)
+void handler_finish(int sig)
 {
+  printf("\nHola, Raúl eliminará las canciones de Ñengo Flow\n");
   kill(PIDS1, SIGABRT);
   kill(PIDS2, SIGABRT);
   kill(PIDS3, SIGABRT);
   kill(pid_fabrica, SIGABRT);
+  printf("\nEl pid de la fabrica es: %i \n", pid_fabrica);
 }
 
 void handler_swi(int sig, siginfo_t *siginfo, void *ucontext)
@@ -91,6 +95,7 @@ int main(int argc, char const *argv[])
 
   if (pid_fabrica > 0)
   {
+    signal(SIGINT, handler_finish);
     for (int i = 0; i < 3; i++){
       int pids_semaforos = fork ();
       if (pids_semaforos == 0) {
@@ -157,4 +162,8 @@ int main(int argc, char const *argv[])
   printf("\n");
   printf("Liberando memoria...\n");
   input_file_destroy(data_in);
+  if (pid_fabrica > 0)
+  {
+    kill(getpid(), SIGINT);
+  }
 }

@@ -20,7 +20,7 @@ int main(int argc, char const *argv[])
   int name = atoi(argv[3]);
   int estado = 1; //1 -> verde, 0 -> rojo
   int t=0;
-  while(t < 100)
+  while(t < 20)
   {
     if (t % tiempo == 0)
     {
