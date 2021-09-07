@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <signal.h>
 
 #include "../file_manager/manager.h"
 
@@ -11,6 +12,7 @@ int* estados_semaforos;
 
 void handler(int sig)
 {
+  printf("\nYA Q ONDA DEJAME REPARTIR TRANQUILE %i\n", getpid());
   exit(0);
 }
 
@@ -40,4 +42,5 @@ int main(int argc, char const *argv[])
     sleep(1);
   }
   wait(NULL);
+  kill(getpid(), SIGABRT);
 }
