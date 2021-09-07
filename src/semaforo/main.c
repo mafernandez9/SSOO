@@ -49,14 +49,14 @@ int main(int argc, char const *argv[])
     {
       if (estado == 1)
       {
-        printf("soy el semaforo %i y mi estado es %i\n", name, estado);
+        printf("soy el semaforo %i y mi estado es %i enviando señal a %i\n", name, estado, id_fabrica);
         estado = 0;
         contador++;
         send_signal_with_int(id_fabrica, name);
       }
       else if (estado == 0)
       {
-        printf("soy el semaforo %i y mi estado es %i\n", name, estado);
+        printf("soy el semaforo %i y mi estado es %i enviando señal a %i\n", name, estado, id_fabrica);
         estado = 1;
         contador++;
         send_signal_with_int(id_fabrica, name);

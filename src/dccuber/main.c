@@ -68,6 +68,7 @@ void handler_finish(int sig)
 
 void handler_swi(int sig, siginfo_t *siginfo, void *ucontext)
 {
+  printf("\n ola soy la fábrica y un semaforo cambió\n");
   int valor_recibido = siginfo->si_value.sival_int;
   estados_semaforos[valor_recibido] = 1 - estados_semaforos[valor_recibido];
   int i = 0;
@@ -147,7 +148,11 @@ int main(int argc, char const *argv[])
     }
   }
   if (pid_fabrica == 0) {
+    printf("\nConectando handler fábrica\n");
+    
     signal(SIGABRT, handler_fabrica);
+    
+    printf("\nConectando handler semaforos fábrica\n");
     connect_sigaction(SIGUSR1, handler_swi);
     printf("\nI'm the FABRICA process and my PID is: %i\n", getpid());
     sleep(T_c);
