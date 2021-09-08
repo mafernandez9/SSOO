@@ -17,9 +17,11 @@ int name;
 
 void handler(int sig)
 {
-  printf("\nYA Q ONDA DEJAME REPARTIR TRANQUILE %i\n", getpid());
+  printf("\nCerrando proceso repartir pid = %i\n", getpid());
   char repartidor[200];
   sprintf(repartidor, "repartidor_%i.txt", name);
+  printf("Guardando archivo %s\n", repartidor);
+
   FILE *output = fopen(repartidor, "w");
 
   fprintf(output, "%i,%i,%i,%i", contadores[0], contadores[1], contadores[2], contador_bodega);
@@ -33,7 +35,6 @@ void handler(int sig)
 void handler_signals(int sig, siginfo_t *siginfo, void *ucontext)
 {
   int valor_recibido = siginfo->si_value.sival_int;
-  printf("\nEstoy entrando, semaforo numero %i\n", valor_recibido);
   estados_semaforos[valor_recibido] = 1 - estados_semaforos[valor_recibido];
 } 
 
@@ -68,7 +69,6 @@ int main(int argc, char const *argv[])
       posicion++;
     }
     seguir = 1;
-    // printf("my pid is %i and my position is %i\n", getpid(), posicion);
     for (int i = 0; i < 3; i++)
     {
       if (dist_semaforos[i] == posicion) {

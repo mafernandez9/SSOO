@@ -15,20 +15,14 @@ void handler(int sig)
 {
   int estado_0 = 0;
 
-  printf("\nbotaron al semaforo %i, tiempo -> %i\n", name, t);
+  printf("\nSe cerró el semáforo %i, en el tiempo -> %i\n", name, t);
   char semaforo[20];
   sprintf(semaforo, "semaforo_%i.txt", name+1);
+  printf("Escribiendo archivo %s\n", semaforo);
   FILE *output = fopen(semaforo, "w");
 
   fprintf(output, "%i", contador);
-  // No agregamos el separador al último número
- 
-
-  // Se cierra el archivo (si no hay leak)
   fclose(output);
-
-  // Terminamos el programa con exit code 0
-  
   exit(0);
 }
 
@@ -40,7 +34,7 @@ int main(int argc, char const *argv[])
   printf("%i", id_fabrica);
   int tiempo = atoi(argv[2]);
   name = atoi(argv[3]);
-  int estado = 1; //1 -> verde, 0 -> rojo
+  int estado = 1; // 1 -> verde, 0 -> rojo
   int valor = 50;
   while(t < valor)
   {
@@ -49,14 +43,14 @@ int main(int argc, char const *argv[])
     {
       if (estado == 1)
       {
-        printf("soy el semaforo %i y mi estado es %i enviando señal a %i\n", name, estado, id_fabrica);
+        printf("[Semáforo %i] Cambié de estado (%i), enviando señal a %i\n", name, estado, id_fabrica);
         estado = 0;
         contador++;
         send_signal_with_int(id_fabrica, name);
       }
       else if (estado == 0)
       {
-        printf("soy el semaforo %i y mi estado es %i enviando señal a %i\n", name, estado, id_fabrica);
+        printf("[Semáforo %i] Cambié de estado (%i), enviando señal a %i\n", name, estado, id_fabrica);
         estado = 1;
         contador++;
         send_signal_with_int(id_fabrica, name);

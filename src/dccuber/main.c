@@ -21,28 +21,31 @@ int estado_0;
 int current_index = 0;
 int* T;
 
-// int numbers[9] = {1, 2, 3, 4, 5, 6, 7, 125, 9};
+/*
+ ¡Hola! Bienvenide a nuestro súper código.
+
+ Matías Fernández Carrasco
+ Raúl Diaz Campos
+
+ El repo en el que trabajamos:
+ https://github.com/mafernandez9/SSOO
+ 
+*/
 
 void handler_fabrica(int sig)
 {
-  printf("\nCerraré la fábrica\n");
+  printf("\nCerrando fábrica...\n");
   int i = 0;
-  printf("\n N = %i \n", N);
   while (i < N)
   {
-    printf("\nchao repartidor %i\n", i);
     if (pids_repartidores[i] != NULL)
     {
-      printf("\nNO ES NULL AAAAAAAA %i\n", i);
       kill(pids_repartidores[i], SIGABRT);
       wait(NULL);
     }
     i++;
   }
-  // wait(NULL);
-  printf("CHAO NO VIMO FABRIK");
-  // Abrimos un archivo en modo de lectura
-  printf("Liberando memoria fabrik");
+  printf("Liberando memoria fabrica\n");
   free(T);
   free(estados_semaforos);
   free(pids_repartidores);
@@ -53,38 +56,29 @@ void handler_fabrica(int sig)
 
 void handler_finish(int sig)
 {
-  printf("\nHola, Raúl eliminará las canciones de Ñengo Flow\n");
-  printf("\n pids -> [%i, %i, %i], pid_fabrica -> %i\n", PIDS1, PIDS2, PIDS3, pid_fabrica);
+  printf("Envío de señal para cerrar fábrica pid = %i", pid_fabrica);
   kill(pid_fabrica, SIGABRT);
-  printf("señal enviada a fabrik %i", pid_fabrica);
   wait(NULL);
   int estado = 0;
-  // https://stackoverflow.com/questions/21248840/example-of-waitpid-in-use
-  // waitpid(pid_fabrica, &estado_0, WUNTRACED || WCONTINUED);
 
   kill(PIDS1, SIGABRT);
   kill(PIDS2, SIGABRT);
   kill(PIDS3, SIGABRT);
-  printf("\nEl pid de la fabrica es: %i \n", pid_fabrica);
-  // waitpid(PIDS1, &estado_0, WUNTRACED || WCONTINUED);
-  // waitpid(PIDS2, &estado_0, WUNTRACED || WCONTINUED);
-  // waitpid(PIDS3, &estado_0, WUNTRACED || WCONTINUED);
-  printf("Liberando memoria nueva...\n");
+  printf("\nEnvío de señal para cerrar semáforos pid = [%i, %i, %i] \n", PIDS1, PIDS2, PIDS3);
+
+  printf("Liberando memoria...\n");
   free(T);
-  printf("Liberando memoria nueva... T\n");
   free(estados_semaforos);
-  printf("Liberando memoria nueva... semaforos\n");
   free(pids_repartidores);
-  printf("Liberando memoria nueva... repartidores\n");
-  // printf("T[0] = %i", T[0]);
   exit(0);
 }
 
 void handler_swi(int sig, siginfo_t *siginfo, void *ucontext)
 {
-  printf("\n ola soy la fábrica y un semaforo cambió\n");
   int valor_recibido = siginfo->si_value.sival_int;
   estados_semaforos[valor_recibido] = 1 - estados_semaforos[valor_recibido];
+  printf("\n[Fábrica] Ha cambiado el semáforo con id = %i\n", valor_recibido);
+
   int i = 0;
   while (i < N)
   {
@@ -98,7 +92,7 @@ void handler_swi(int sig, siginfo_t *siginfo, void *ucontext)
 
 int main(int argc, char const *argv[])
 {
-  printf("I'm the DCCUBER process and my PID is: %i\n", getpid());
+  printf("DCCUBER (pid = %i)\n", getpid());
   char *filename;
   if (argc > 1) {
     filename = argv[1];
@@ -167,19 +161,15 @@ int main(int argc, char const *argv[])
       }
     }
   }
-  if (pid_fabrica == 0) {
-    printf("\nConectando handler fábrica\n");
-    
+  if (pid_fabrica == 0) {    
     signal(SIGABRT, handler_fabrica);
-    
-    printf("\nConectando handler semaforos fábrica\n");
     connect_sigaction(SIGUSR1, handler_swi);
+
     printf("\nI'm the FABRICA process and my PID is: %i\n", getpid());
     sleep(T_c);
     pids_repartidores = calloc(N, sizeof(int));
     for (int i = 0; i < N; i++)
       {
-        printf("\nMAAAAAAAAAAAAATI %i\n", i);
         char name[20];
         sprintf(name, "%i", i);
         char dist_bodega[20];
@@ -196,13 +186,11 @@ int main(int argc, char const *argv[])
         sprintf(e_s2, "%i", estados_semaforos[1]);
         char e_s3[20];
         sprintf(e_s3, "%i", estados_semaforos[2]);
-        printf("\nSEE LOGROOOO %i\n", i);
         char *args[] = {"./repartidor", name, dist_bodega, dist_s1, dist_s2, dist_s3, e_s1, e_s2, e_s3, NULL};
         pids_repartidores[i] = fork ();
-        printf("\nEEEEEEE %i %i\n", i, pids_repartidores[i]);
         if (pids_repartidores[i] == 0)
         {
-          printf("CAMBIANDO %i", pids_repartidores[i]);
+          printf("Enviando a repartir id = %i", pids_repartidores[i]);
           execvp("./repartidor", args);
         }
         sleep(T_c);
@@ -217,31 +205,24 @@ int main(int argc, char const *argv[])
         wait(NULL);
   }
   printf("\n");
-  printf("Liberando memoria...\n");
-  // input_file_destroy(data_in);
   if (pid_fabrica > 0)
   {
-    // printf("\nHola, Raúl eliminará las canciones de Ñengo Flow\n");
-    printf("\n pids -> [%i, %i, %i], pid_fabrica -> %i\n", PIDS1, PIDS2, PIDS3, pid_fabrica);
+    printf("Envío de señal para cerrar fabrica pid = %i", pid_fabrica);
     kill(pid_fabrica, SIGABRT);
-    // int estado = 0;
-    // https://stackoverflow.com/questions/21248840/example-of-waitpid-in-use
-    // waitpid(pid_fabrica, &estado_0, WUNTRACED || WCONTINUED);
-
+   
+    printf("Envío de señal para cerrar semáforos pid = [%i, %i, %i]", PIDS1, PIDS2, PIDS3);
     kill(PIDS1, SIGABRT);
     kill(PIDS2, SIGABRT);
     kill(PIDS3, SIGABRT);
-    printf("\nEl pid de la fabrica es: %i \n", pid_fabrica);
-    // waitpid(PIDS1, &estado_0, WUNTRACED || WCONTINUED);
-    // waitpid(PIDS2, &estado_0, WUNTRACED || WCONTINUED);
-    // waitpid(PIDS3, &estado_0, WUNTRACED || WCONTINUED);
+
+    printf("Liberando memoria main...");
     free(T);
     free(estados_semaforos);
     free(pids_repartidores);
     exit(0);
   }
   if (pid_fabrica == 0) {
-    printf("chao fabrik");
+    printf("Liberando memoria fabrica...");
     free(T);
     free(estados_semaforos);
     free(pids_repartidores);
