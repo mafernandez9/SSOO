@@ -209,6 +209,9 @@ int main(int argc, char const *argv[])
     // waitpid(PIDS3, &estado_0, WUNTRACED || WCONTINUED);
     exit(0);
   }
+  if (pid_fabrica == 0) {
+    printf("chao fabrik");
+  }
 
   exit(0);
 }
