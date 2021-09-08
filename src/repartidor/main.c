@@ -24,6 +24,9 @@ void handler(int sig)
 
   fprintf(output, "%i,%i,%i,%i", contadores[0], contadores[1], contadores[2], contador_bodega);
   fclose(output);
+  free(estados_semaforos);
+  free(contadores);
+  free(dist_semaforos);
   exit(0);
 }
 
@@ -65,7 +68,7 @@ int main(int argc, char const *argv[])
       posicion++;
     }
     seguir = 1;
-    printf("my pid is %i and my position is %i\n", getpid(), posicion);
+    // printf("my pid is %i and my position is %i\n", getpid(), posicion);
     for (int i = 0; i < 3; i++)
     {
       if (dist_semaforos[i] == posicion) {

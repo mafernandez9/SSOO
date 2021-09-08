@@ -41,8 +41,8 @@ int main(int argc, char const *argv[])
   int tiempo = atoi(argv[2]);
   name = atoi(argv[3]);
   int estado = 1; //1 -> verde, 0 -> rojo
-  
-  while(t < 30)
+  int valor = 50;
+  while(t < valor)
   {
     t++;
     if (t % tiempo == 0)
@@ -66,6 +66,6 @@ int main(int argc, char const *argv[])
     // t++;
     
   }
-  // wait(NULL);
+  wait(NULL);
   kill(getpid(), SIGABRT);
 }

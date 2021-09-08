@@ -19,6 +19,8 @@ int ES2;
 int ES3;
 int estado_0;
 int current_index = 0;
+int* T;
+
 // int numbers[9] = {1, 2, 3, 4, 5, 6, 7, 125, 9};
 
 void handler_fabrica(int sig)
@@ -40,7 +42,10 @@ void handler_fabrica(int sig)
   // wait(NULL);
   printf("CHAO NO VIMO FABRIK");
   // Abrimos un archivo en modo de lectura
-
+  printf("Liberando memoria fabrik");
+  free(T);
+  free(estados_semaforos);
+  free(pids_repartidores);
 
   
   exit(0);
@@ -51,6 +56,7 @@ void handler_finish(int sig)
   printf("\nHola, Raúl eliminará las canciones de Ñengo Flow\n");
   printf("\n pids -> [%i, %i, %i], pid_fabrica -> %i\n", PIDS1, PIDS2, PIDS3, pid_fabrica);
   kill(pid_fabrica, SIGABRT);
+  printf("señal enviada a fabrik %i", pid_fabrica);
   wait(NULL);
   int estado = 0;
   // https://stackoverflow.com/questions/21248840/example-of-waitpid-in-use
@@ -60,9 +66,17 @@ void handler_finish(int sig)
   kill(PIDS2, SIGABRT);
   kill(PIDS3, SIGABRT);
   printf("\nEl pid de la fabrica es: %i \n", pid_fabrica);
-  waitpid(PIDS1, &estado_0, WUNTRACED || WCONTINUED);
-  waitpid(PIDS2, &estado_0, WUNTRACED || WCONTINUED);
-  waitpid(PIDS3, &estado_0, WUNTRACED || WCONTINUED);
+  // waitpid(PIDS1, &estado_0, WUNTRACED || WCONTINUED);
+  // waitpid(PIDS2, &estado_0, WUNTRACED || WCONTINUED);
+  // waitpid(PIDS3, &estado_0, WUNTRACED || WCONTINUED);
+  printf("Liberando memoria nueva...\n");
+  free(T);
+  printf("Liberando memoria nueva... T\n");
+  free(estados_semaforos);
+  printf("Liberando memoria nueva... semaforos\n");
+  free(pids_repartidores);
+  printf("Liberando memoria nueva... repartidores\n");
+  // printf("T[0] = %i", T[0]);
   exit(0);
 }
 
@@ -85,7 +99,12 @@ void handler_swi(int sig, siginfo_t *siginfo, void *ucontext)
 int main(int argc, char const *argv[])
 {
   printf("I'm the DCCUBER process and my PID is: %i\n", getpid());
-  char *filename = "input.txt";
+  char *filename;
+  if (argc > 1) {
+    filename = argv[1];
+  } else {
+    filename = "input.txt";
+  }
   InputFile *data_in = read_file(filename);
   printf("Leyendo el archivo %s...\n", filename);
   printf("- Lineas en archivo: %i\n", data_in->len);
@@ -99,7 +118,7 @@ int main(int argc, char const *argv[])
   printf("\t- ");
   // int N;
   N = atoi(data_in -> lines[1][1]);
-  int* T = calloc(3, sizeof(int));
+  T = calloc(3, sizeof(int));
   int T_c = atoi(data_in -> lines[1][0]);
   T[0] = atoi(data_in -> lines[1][2]);
   T[1] = atoi(data_in -> lines[1][3]);
@@ -116,6 +135,7 @@ int main(int argc, char const *argv[])
   {
     printf("%s, ", data_in->lines[1][i]);
   }
+  input_file_destroy(data_in);
   pid_fabrica = fork(); //creamos la fabrica
 
   if (pid_fabrica > 0)
@@ -159,6 +179,7 @@ int main(int argc, char const *argv[])
     pids_repartidores = calloc(N, sizeof(int));
     for (int i = 0; i < N; i++)
       {
+        printf("\nMAAAAAAAAAAAAATI %i\n", i);
         char name[20];
         sprintf(name, "%i", i);
         char dist_bodega[20];
@@ -175,13 +196,20 @@ int main(int argc, char const *argv[])
         sprintf(e_s2, "%i", estados_semaforos[1]);
         char e_s3[20];
         sprintf(e_s3, "%i", estados_semaforos[2]);
+        printf("\nSEE LOGROOOO %i\n", i);
         char *args[] = {"./repartidor", name, dist_bodega, dist_s1, dist_s2, dist_s3, e_s1, e_s2, e_s3, NULL};
         pids_repartidores[i] = fork ();
+        printf("\nEEEEEEE %i %i\n", i, pids_repartidores[i]);
         if (pids_repartidores[i] == 0)
         {
+          printf("CAMBIANDO %i", pids_repartidores[i]);
           execvp("./repartidor", args);
         }
         sleep(T_c);
+      }
+      for (int i = 0; i < N; i++) {
+        wait(NULL);
+        wait(NULL);
       }
   }
   if (pid_fabrica > 0)
@@ -190,7 +218,7 @@ int main(int argc, char const *argv[])
   }
   printf("\n");
   printf("Liberando memoria...\n");
-  input_file_destroy(data_in);
+  // input_file_destroy(data_in);
   if (pid_fabrica > 0)
   {
     // printf("\nHola, Raúl eliminará las canciones de Ñengo Flow\n");
@@ -207,11 +235,18 @@ int main(int argc, char const *argv[])
     // waitpid(PIDS1, &estado_0, WUNTRACED || WCONTINUED);
     // waitpid(PIDS2, &estado_0, WUNTRACED || WCONTINUED);
     // waitpid(PIDS3, &estado_0, WUNTRACED || WCONTINUED);
+    free(T);
+    free(estados_semaforos);
+    free(pids_repartidores);
     exit(0);
   }
   if (pid_fabrica == 0) {
     printf("chao fabrik");
+    free(T);
+    free(estados_semaforos);
+    free(pids_repartidores);
+    kill(getpid(), SIGABRT);
   }
 
-  exit(0);
+  // exit(0);
 }
