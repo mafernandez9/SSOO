@@ -80,6 +80,7 @@ int main(int argc, char const *argv[])
     }
     if (p_bodega == posicion) {
         contador_bodega = t;
+        kill(getpid(), SIGABRT);
     }
     sleep(1);
     t++;
